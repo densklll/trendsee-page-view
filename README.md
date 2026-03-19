@@ -1,5 +1,9 @@
 # TrendSee — Publication Feed (FastAPI + Vue)
 
+[![CI](https://github.com/densklll/trendsee-page-view/actions/workflows/ci.yml/badge.svg)](https://github.com/densklll/trendsee-page-view/actions/workflows/ci.yml)
+
+**Live demo (фронт):** [densklll.github.io/trendsee-page-view](https://densklll.github.io/trendsee-page-view/) — без бэкенда, на мок-данных.
+
 Сервис ленты публикаций с JWT-авторизацией, Redis-кэшированием и Vue-фронтендом по дизайну Figma.
 
 ## Быстрый старт
