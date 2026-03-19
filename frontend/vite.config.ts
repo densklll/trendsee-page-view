@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const apiProxy = env.API_PROXY_TARGET || 'http://127.0.0.1:8000'
 
   return {
+    base: process.env.GITHUB_ACTIONS ? '/trendsee-page-view/' : '/',
     plugins: [vue()],
     resolve: {
       alias: {

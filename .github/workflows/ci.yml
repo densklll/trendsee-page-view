@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   # ─── Backend: build Docker image ───────────────────────────────────────────
   backend:
@@ -17,9 +22,9 @@ jobs:
       - name: Build backend image
         run: docker build ./backend
 
-  # ─── Frontend: type-check + Vite build ────────────────────────────────────
+  # ─── Frontend: type-check + Vite build + upload Pages artifact ────────────
   frontend:
-    name: Frontend — type-check & build
+    name: Frontend — build & upload
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +42,26 @@ jobs:
       - name: Build (vue-tsc + vite)
         run: npm run build
         working-directory: frontend
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  # ─── Deploy to GitHub Pages ────────────────────────────────────────────────
+  deploy:
+    name: Deploy → GitHub Pages
+    needs: frontend
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   # ─── Stack smoke-test: docker compose up + /health ────────────────────────
   stack:
