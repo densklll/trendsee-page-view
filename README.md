@@ -1,5 +1,7 @@
 <div align="center">
 
+🇬🇧 English | [🇷🇺 Русский](README.ru.md)
+
 # TrendSee — Publication Feed
 
 **A full-stack content feed service with JWT auth, Redis caching, and a pixel-perfect Vue UI**
@@ -64,36 +66,31 @@ docker compose --profile docker-ui up --build
 | API | http://localhost:8000 |
 | Swagger | http://localhost:8000/docs |
 
-### Option 2 — Backend in Docker, frontend locally (faster dev loop)
+### Option 2 — Backend in Docker, frontend locally
 
 ```bash
-docker compose up -d db redis app   # start Postgres + Redis + API
-cd frontend
-npm install
-npm run dev                          # http://localhost:5173
+docker compose up -d db redis app
+cd frontend && npm install && npm run dev
 ```
 
 ### Option 3 — Fully local (no Docker)
 
 ```bash
-# Infrastructure
-npm run dev:infra   # starts db + redis via docker compose
+npm run dev:infra   # starts db + redis
 
-# Backend
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python3 -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
-# Frontend (separate terminal)
+# separate terminal
 cd frontend && npm run dev
 ```
 
 ### Reset database
 
 ```bash
-docker compose down -v
-docker compose up -d db redis app
+docker compose down -v && docker compose up -d db redis app
 ```
 
 ## Project Structure
@@ -114,7 +111,7 @@ trendsee-page-view/
 │   └── src/
 │       ├── components/    # VideoCard, PublicationModal, SideBar, …
 │       ├── views/         # SearchResultsView, VideoDetailView
-│       ├── stores/        # Pinia publications store (API + mock fallback)
+│       ├── stores/        # Pinia store (API + mock fallback)
 │       └── api/           # axios client
 ├── postman/               # Postman collection
 ├── docker-compose.yml
