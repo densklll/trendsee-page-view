@@ -1,0 +1,151 @@
+{
+  "info": {
+    "name": "Publication Feed API",
+    "description": "FastAPI: пользователи, JWT, публикации, кэш Redis.\nБаза: `http://localhost:8000`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "1" },
+    { "key": "pubId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "POST /api/users",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Тестовый пользователь\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "GET /api/users/{id}/token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/{{userId}}/token"
+          }
+        },
+        {
+          "name": "PATCH /api/users/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Новое имя\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "DELETE /api/users/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Publications",
+      "item": [
+        {
+          "name": "POST /api/publications",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Заголовок\",\n  \"text\": \"Текст публикации\"\n}"
+            },
+            "url": "{{baseUrl}}/api/publications"
+          }
+        },
+        {
+          "name": "GET /api/publications/user/{user_id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/publications/user/{{userId}}"
+          }
+        },
+        {
+          "name": "GET /api/publications/user/{user_id}/feed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/publications/user/{{userId}}/feed?limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publications", "user", "{{userId}}", "feed"],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/publications/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/publications/{{pubId}}"
+          }
+        },
+        {
+          "name": "PATCH /api/publications/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Обновлённый заголовок\"\n}"
+            },
+            "url": "{{baseUrl}}/api/publications/{{pubId}}"
+          }
+        },
+        {
+          "name": "DELETE /api/publications/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/publications/{{pubId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

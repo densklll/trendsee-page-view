@@ -1,0 +1,77 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: publications
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/publications
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: super-secret-key-change-in-production
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # По умолчанию не стартует: иначе порт 5173 занят, а локальный `npm run dev` в папке frontend не поднять.
+  # Всё в Docker: docker compose --profile docker-ui up --build
+  frontend:
+    profiles:
+      - docker-ui
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - NODE_ENV=development
+      - API_PROXY_TARGET=http://app:8000
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
